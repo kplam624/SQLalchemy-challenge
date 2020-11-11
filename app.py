@@ -53,6 +53,21 @@ def precipitation():
     
     return jsonify(prcp)
 
+@app.route("/api/v1.0/stations")
+def stations():
+    session = Session(engine)
+
+    results = session.query(sta.station).all()
+
+    session.close()
+
+    station = []
+    for name in results:
+        station_dict = {}
+        station_dict['Name'] = name
+        station.append(station_dict)
+    
+    return jsonify(station)
 
 if __name__ == '__main__':
     app.run(debug=True)
