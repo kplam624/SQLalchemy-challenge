@@ -89,5 +89,22 @@ def tobs():
 
     return jsonify(tob)
 
+@app.route("/api/v1.0/<start>")
+def temp(start):
+    session = Session(engine)
+    temperature = session.query(func.min(meas.tobs),func.max(meas.tobs),func.avg(meas.tobs)).\
+        filter(meas.date > start).all()
+    session.close()
+
+    temp_imp = []
+    for min,max,avg in temperature:
+        temp_dict = {}
+        temp_dict['Min'] = min
+        temp_dict['Max'] = max
+        temp_dict['Average'] = avg
+        temp_imp.append(temp_dict)
+
+    return jsonify(temp_imp) 
+
 if __name__ == '__main__':
     app.run(debug=True)
