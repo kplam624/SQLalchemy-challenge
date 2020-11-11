@@ -69,5 +69,25 @@ def stations():
     
     return jsonify(station)
 
+@app.route("/api/v1.0/tobs")
+def tobs():
+    session = Session(engine)
+
+    sel3 = (meas.date, meas.tobs)
+    station_tobs = session.query(*sel3).filter(meas.date > '2016-08-23',meas.station == 'USC00519281').\
+        group_by(meas.date).\
+        order_by(meas.date).all()
+    
+    session.close()
+
+    tob = []
+    for date, temp in station_tobs:
+        stat_tobs={}
+        stat_tobs['Date'] = date
+        stat_tobs['Temperature'] = temp
+        tob.append(stat_tobs)
+
+    return jsonify(tob)
+
 if __name__ == '__main__':
     app.run(debug=True)
