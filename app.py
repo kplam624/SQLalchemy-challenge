@@ -93,7 +93,7 @@ def tobs():
 def temp(start):
     session = Session(engine)
     temperature = session.query(func.min(meas.tobs),func.max(meas.tobs),func.avg(meas.tobs)).\
-        filter(meas.date > start).all()
+        filter(meas.date >= start).all()
     session.close()
 
     temp_imp = []
