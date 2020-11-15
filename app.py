@@ -29,7 +29,7 @@ def home():
         f"/api/v1.0/tobs<br/>"
         f"/api/v1.0/start<br/>"
         f"/api/v1.0/start/end<br/>"
-        f"Use the following api route for more information on the the routes themselves.<br/>"
+        f"<br/> Use the following api route for more information on the the routes themselves.<br/>"
         f"/api/v1.0/help"
     )
 
@@ -127,7 +127,23 @@ def temps(start, end):
         s_e_dict['Average'] = avg
         temp_s_e.append(s_e_dict)
 
+    if temp_s_e[0]['Min'] is None:
+        return "Oops. Something went wrong. Is your date in the YYYY-MM-DD format?<br/>" \
+            "Please try again or go to /api/v1.0/help"
+
     return jsonify(temp_s_e)    
+
+@app.route("/api/v1.0/help")
+def help():
+    return f"Hi, this is a quick rundown on what each route does. <br/>"\
+        "<br/> The api will pull from a database that contains the climate data from Hawaii (currently upto 2017). <br/>"\
+        "/api/v1.0/precipitation shows the precipitation shows the precipitation data for the past year (2016-2017).<br/>"\
+        "/api/v1.0/stations shows how many stations collected data. <br/>"\
+        "/api/v1.0/tobs shows the Temperature Observation Data (TOBS) at the most active station (USC00519281)<br/>"\
+        "/api/v1.0/start shows the min, max and average temperature after the requested date(Up to 2017-08-23). Replace 'start' with a date in YYYY-MM-DD format.<br/>"\
+        "/api/v1.0/start/end shows the min, max and average temperature between the requested dates (Up to 2017-08-23). Replace 'start' and 'end' with a date in YYYY-MM-DD format."\
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
