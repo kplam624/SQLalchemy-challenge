@@ -29,6 +29,8 @@ def home():
         f"/api/v1.0/tobs<br/>"
         f"/api/v1.0/start<br/>"
         f"/api/v1.0/start/end<br/>"
+        f"Use the following api route for more information on the the routes themselves.<br/>"
+        f"/api/v1.0/help"
     )
 
 @app.route("/api/v1.0/precipitation")
@@ -103,8 +105,29 @@ def temp(start):
         temp_dict['Max'] = max
         temp_dict['Average'] = avg
         temp_imp.append(temp_dict)
+    
+    if temp_imp[0]['Min'] is None:
+        return "Oops. Something went wrong. Is your date in the YYYY-MM-DD format?<br/>" \
+            "Please try again or go to /api/v1.0/help"
 
     return jsonify(temp_imp) 
+
+@app.route("/api/v1.0/<start>/<end>")
+def temps(start, end):
+    session = Session(engine)
+    temperatures = session.query(func.min(meas.tobs),func.max(meas.tobs),func.avg(meas.tobs)).\
+        filter(meas.date >= start,meas.date <= end).all()
+    session.close()
+
+    temp_s_e = []
+    for min,max,avg in temperatures:
+        s_e_dict = {}
+        s_e_dict['Min'] = min
+        s_e_dict['Max'] = max
+        s_e_dict['Average'] = avg
+        temp_s_e.append(s_e_dict)
+
+    return jsonify(temp_s_e)    
 
 if __name__ == '__main__':
     app.run(debug=True)
