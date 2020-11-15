@@ -51,10 +51,8 @@ def precipitation():
     session = Session(engine)
 
     # Query values
-    sel = {meas.date, func.avg(meas.prcp)}
-
     # Session Query
-    prcp_val = session.query(*sel).\
+    prcp_val = session.query(meas.date, func.avg(meas.prcp)).\
         filter(meas.date > '2016-08-23').\
         group_by(meas.date).\
         order_by(meas.date).all()
@@ -101,8 +99,7 @@ def tobs():
     session = Session(engine)
 
     # Session Query
-    sel3 = (meas.date, meas.tobs)
-    station_tobs = session.query(*sel3).filter(meas.date > '2016-08-23',meas.station == 'USC00519281').\
+    station_tobs = session.query(meas.date, meas.tobs).filter(meas.date > '2016-08-23',meas.station == 'USC00519281').\
         group_by(meas.date).\
         order_by(meas.date).all()
 
